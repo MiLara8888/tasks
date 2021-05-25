@@ -1,22 +1,28 @@
-# Вашей программе на вход подается ссылка на HTML файл.
-# Вам необходимо скачать этот файл, затем найти в нем все ссылки вида <a ... href="..." ... >
-# и вывести список сайтов, на которые есть ссылка.
-#
-# Сайтом в данной задаче будем называть имя домена вместе с именами поддоменов.
-# То есть, это последовательность символов, которая следует сразу после символов протокола, если он есть,
-# до символов порта или пути, если они есть, за исключением случаев с относительными ссылками вида
-# <a href="../some_path/index.html">.
-#
-# Сайты следует выводить в алфавитном порядке.
 import requests
-import re
-n=input()
-text=requests.get(n).text
-list=re.findall(r"<a(.*?)href(.*?)=(.*?)(\"|')(((.*?):\/\/)|(\.\.)|)(.*?)(\/|:|\"|')(.*)",text)
-list2=[]
-for i in list:
-    if i[8] not in list2:
-        list2.append(i[8])
-list2=sorted(list2)
-for i in list2:
-    print(i)
+import time
+
+text = 'http://api.openweathermap.org/data/2.5/weather'
+params = {'q': input(), 'appid': '',
+          'units': 'metric', 'lang': 'ru'}
+res = requests.get(text, params=params)
+res = res.json()
+
+if res['cod'] == '404':
+    print('Пожалуйста введите город')
+elif res['cod'] == 200:
+    temp = 'Сейчас - {}℃'.format(int(res['main']['temp']))
+    feels_like = 'Ощущается как - {}℃'.format(int(res['main']['feels_like']))
+    temp_min = 'Минимальная температура в городе - {}℃'.format(int(res['main']['temp_min']))
+    temp_max = 'Максимальная температура в городе - {}℃'.format(int(res['main']['temp_max']))
+    wind = 'Скорость ветра {}м/c'.format(round(float(res['wind']['speed'])), 1)
+    weather = 'На улице - {}'.format(res['weather'][0]['description'])
+    sunrise = 'Восход солнца - {}'.format(time.strftime('%X', time.localtime(res['sys']['sunrise'])))
+    sunset = 'Заход солнца - {}'.format(time.strftime('%X', time.localtime(res['sys']['sunset'])))
+    print(weather)
+    print(temp)
+    print(feels_like)
+    print(temp_min)
+    print(temp_max)
+    print(wind)
+    print(sunset)
+    print(sunrise)
